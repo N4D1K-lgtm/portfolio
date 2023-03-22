@@ -1,33 +1,92 @@
+"use client";
+import * as React from "react";
+import { TerminalContextProvider } from "react-terminal";
 import { ReactTerminal } from "react-terminal";
 
-function Terminal(props) {
-  // Define commands here
+const Terminal = () => {
+  const [theme, setTheme] = React.useState("material-dark");
+  const [controlBar, setControlBar] = React.useState(false);
+  const [controlButtons, setControlButtons] = React.useState(false);
+  const [prompt, setPrompt] = React.useState(">");
+
   const commands = {
-    whoami: "kidannelson",
-    help: (command) => helpHandler(command),
-    cd: (directory) => `changed path to ${directory}`,
-    ls: handleListDirectory(),
-    github: (
-      <a href="https://github.com/N4D1K-lgtm">N4D1K-lgtm on Github.com</a>
+    help: (
+      <span>
+        <strong>clear</strong> - clears the console. <br />
+        <strong>change_prompt &lt;PROMPT&gt;</strong> - Change the prompt of the
+        terminal. <br />
+        <strong>change_theme &lt;THEME&gt;</strong> - Changes the theme of the
+        terminal. Allowed themes - light, dark, material-light, material-dark,
+        material-ocean, matrix and dracula. <br />
+        <strong>toggle_control_bar</strong> - Hides / Display the top control
+        bar. <br />
+        <strong>toggle_control_buttons</strong> - Hides / Display the top
+        buttons on control bar. <br />
+        <strong>evaluate_math_expression &lt;EXPR&gt;</strong> - Evaluates a
+        mathematical expression (eg, <strong>4*4</strong>) by hitting a public
+        API, api.mathjs.org.
+      </span>
     ),
+
+    change_prompt: (prompt) => {
+      setPrompt(prompt);
+    },
+
+    change_theme: (theme) => {
+      const validThemes = [
+        "light",
+        "dark",
+        "material-light",
+        "material-dark",
+        "material-ocean",
+        "matrix",
+        "dracula",
+      ];
+      if (!validThemes.includes(theme)) {
+        return `Theme ${theme} not valid. Try one of ${validThemes.join(", ")}`;
+      }
+      setTheme(theme);
+    },
+
+    toggle_control_bar: () => {
+      setControlBar(!controlBar);
+    },
+
+    toggle_control_buttons: () => {
+      setControlButtons(!controlButtons);
+    },
+
+    evaluate_math_expression: async (expr) => {
+      const response = await fetch(
+        `https://api.mathjs.org/v4/?expr=${encodeURIComponent(expr)}`
+      );
+      return await response.text();
+    },
   };
 
-  function handleListDirectory() {
-    return "hello from callback";
-  }
-
-  function helpHandler(command) {}
+  const welcomeMessage = (
+    <span>
+      Type "help" for all available commands. <br />
+    </span>
+  );
 
   return (
-    <ReactTerminal
-      commands={commands}
-      theme="material-dark"
-      showControlBar={false}
-      showControlButtons={false}
-      welcomeMessage={"Welcome! Type 'help' to get started. \n"}
-      prompt={">"}
-      errorMessage={"Command not found!"}
-    />
+    <div className="App">
+      <TerminalContextProvider>
+        <ReactTerminal
+          prompt={prompt}
+          theme={theme}
+          showControlBar={controlBar}
+          showControlButtons={controlButtons}
+          welcomeMessage={welcomeMessage}
+          commands={commands}
+          defaultHandler={(command, commandArguments) => {
+            return `${command} passed on to default handler with arguments ${commandArguments}`;
+          }}
+        />
+      </TerminalContextProvider>
+    </div>
   );
-}
+};
+
 export default Terminal;
