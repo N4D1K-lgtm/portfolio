@@ -14,7 +14,7 @@ import { getFilesAndFolders } from "../utils/directory";
 const Terminal = () => {
   const [theme, setTheme] = React.useState("default");
   const [user, setUser] = React.useState("kidannelson");
-  const [prompt, setPrompt] = React.useState("$");
+  const [prompt, setPrompt] = React.useState("&#36;");
   const [location, setLocation] = React.useState("~/aboutme");
 
   function helpHandler(command) {
