@@ -9,5 +9,14 @@ body {
 }
 
 html {
-  background-color: #151515;
+  background-color: #191c1d;
+}
+
+.user {
+  color: #4cd6fb;
+}
+
+.location {
+  color: #b3ebff;
+  font-weight: bold;
 }
